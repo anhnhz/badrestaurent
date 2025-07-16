@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nhà Hàng Sài Gòn - Đánh Giá Khách Hàng</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: repeating-linear-gradient(
+                45deg,
+                transparent,
+                transparent 10px,
+                rgba(255, 255, 255, 0.1) 10px,
+                rgba(255, 255, 255, 0.1) 20px
+            );
+            animation: slidePattern 20s linear infinite;
+        }
+
+        @keyframes slidePattern {
+            0% { transform: translateX(-50px); }
+            100% { transform: translateX(50px); }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stats-bar {
+            background: #2c3e50;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            color: white;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 10px;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #f39c12;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.8;
+        }
+
+        .reviews-section {
+            padding: 40px;
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+            border-radius: 2px;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #ddd;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .review-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b6b, #ee5a24);
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .review-card.positive {
+            border-left-color: #27ae60;
+        }
+
+        .review-card.negative {
+            border-left-color: #e74c3c;
+        }
+
+        .review-card.neutral {
+            border-left-color: #f39c12;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .reviewer-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .reviewer-details h4 {
+            color: #2c3e50;
+            margin-bottom: 2px;
+        }
+
+        .reviewer-details span {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        .rating {
+            display: flex;
+            gap: 3px;
+        }
+
+        .star {
+            color: #f39c12;
+            font-size: 1.2em;
+        }
+
+        .star.empty {
+            color: #ddd;
+        }
+
+        .review-content {
+            line-height: 1.6;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        .review-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #ecf0f1;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .helpful-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.8em;
+        }
+
+        .helpful-btn:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .filter-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 10px 20px;
+            background: #ecf0f1;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-tab.active {
+            background: #3498db;
+            color: white;
+        }
+
+        .filter-tab:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        @media (max-width: 768px) {
+            .stats-bar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .reviews-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🍜 Nhà Hàng Sài Gòn</h1>
+            <p>Hương vị truyền thống - Dịch vụ tận tâm</p>
+        </div>
+
+        <div class="stats-bar">
+            <div class="stat-item">
+                <div class="stat-number">3.2</div>
+                <div class="stat-label">Điểm trung bình</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">127</div>
+                <div class="stat-label">Tổng đánh giá</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">45</div>
+                <div class="stat-label">Đánh giá tích cực</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">38</div>
+                <div class="stat-label">Đánh giá tiêu cực</div>
+            </div>
+        </div>
+
+        <div class="reviews-section">
+            <h2 class="section-title">Đánh Giá Từ Khách Hàng</h2>
+            
+            <div class="filter-tabs">
+                <button class="filter-tab active" onclick="filterReviews('all')">Tất cả</button>
+                <button class="filter-tab" onclick="filterReviews('positive')">Tích cực</button>
+                <button class="filter-tab" onclick="filterReviews('negative')">Tiêu cực</button>
+                <button class="filter-tab" onclick="filterReviews('neutral')">Trung bình</button>
+            </div>
+
+            <div class="reviews-grid" id="reviewsGrid">
+                <!-- Đánh giá tích cực -->
+                <div class="review-card positive" data-category="positive">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">MH</div>
+                            <div class="reviewer-details">
+                                <h4>Minh Hoàng</h4>
+                                <span>Khách hàng thân thiết</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Món ăn ngon tuyệt vời! Phở bò có nước dùng đậm đà, thịt bò tươi ngon. Nhân viên phục vụ rất nhiệt tình và chu đáo. Không gian nhà hàng sạch sẽ, thoáng mát. Tôi sẽ quay lại lần nữa!
+                    </div>
+                    <div class="review-meta">
+                        <span>2 ngày trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (12)</button>
+                    </div>
+                </div>
+
+                <!-- Đánh giá tiêu cực -->
+                <div class="review-card negative" data-category="negative">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">TL</div>
+                            <div class="reviewer-details">
+                                <h4>Thùy Linh</h4>
+                                <span>Khách hàng mới</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Rất thất vọng với chất lượng món ăn. Phở có vị lạt, thịt bò dai và không tươi. Phục vụ chậm, đợi tới 30 phút mới có món. Giá cả không tương xứng với chất lượng. Không khuyến khích đến đây.
+                    </div>
+                    <div class="review-meta">
+                        <span>3 ngày trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (8)</button>
+                    </div>
+                </div>
+
+                <!-- Đánh giá tích cực -->
+                <div class="review-card positive" data-category="positive">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">DK</div>
+                            <div class="reviewer-details">
+                                <h4>Đức Kiên</h4>
+                                <span>Khách hàng VIP</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star empty">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Bún bò Huế ở đây rất ngon! Nước dùng đậm đà, cay vừa phải. Không gian nhà hàng đẹp, thoáng mát. Nhân viên thân thiện. Giá cả hợp lý. Đáng để thử!
+                    </div>
+                    <div class="review-meta">
+                        <span>5 ngày trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (15)</button>
+                    </div>
+                </div>
+
+                <!-- Đánh giá tiêu cực -->
+                <div class="review-card negative" data-category="negative">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">PT</div>
+                            <div class="reviewer-details">
+                                <h4>Phương Thảo</h4>
+                                <span>Khách hàng mới</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Kinh khủng! Gỏi cuốn bị chua, tôm không tươi. Nước chấm loãng không có vị. Bàn ghế dính, không sạch sẽ. Nhân viên thái độ không tốt, không nhiệt tình. Tôi không bao giờ quay lại nữa!
+                    </div>
+                    <div class="review-meta">
+                        <span>1 tuần trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (22)</button>
+                    </div>
+                </div>
+
+                <!-- Đánh giá trung bình -->
+                <div class="review-card neutral" data-category="neutral">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">VT</div>
+                            <div class="reviewer-details">
+                                <h4>Văn Tùng</h4>
+                                <span>Khách hàng thường xuyên</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Món ăn bình thường, không có gì đặc biệt. Phục vụ tốt nhưng không gian hơi ồn ào. Giá cả hợp lý với chất lượng. Có thể cải thiện thêm về menu và cách trang trí.
+                    </div>
+                    <div class="review-meta">
+                        <span>1 tuần trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (5)</button>
+                    </div>
+                </div>
+
+                <!-- Đánh giá tiêu cực -->
+                <div class="review-card negative" data-category="negative">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">HN</div>
+                            <div class="reviewer-details">
+                                <h4>Hải Nam</h4>
+                                <span>Khách hàng mới</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Đồ ăn ra muộn, bánh mì thịt nướng khô cứng. Nước trà đá không ngọt, có vị kỳ lạ. Nhân viên quên order nhiều lần. Toilet không sạch sẽ. Trải nghiệm rất tệ, không đáng tiền.
+                    </div>
+                    <div class="review-meta">
+                        <span>2 tuần trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (18)</button>
+                    </div>
+                </div>
+
+                <!-- Đánh giá tích cực -->
+                <div class="review-card positive" data-category="positive">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">LM</div>
+                            <div class="reviewer-details">
+                                <h4>Lan Mai</h4>
+                                <span>Khách hàng thân thiết</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Cơm tấm sườn nướng rất ngon! Sườn nướng thơm, cơm dẻo vừa phải. Chấm nước mắm ngọt đậm đà. Rau sống tươi xanh. Giá cả phải chăng, phục vụ nhanh chóng. Rất hài lòng!
+                    </div>
+                    <div class="review-meta">
+                        <span>2 tuần trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (9)</button>
+                    </div>
+                </div>
+
+                <!-- Đánh giá tiêu cực -->
+                <div class="review-card negative" data-category="negative">
+                    <div class="review-header">
+                        <div class="reviewer-info">
+                            <div class="reviewer-avatar">QD</div>
+                            <div class="reviewer-details">
+                                <h4>Quang Dũng</h4>
+                                <span>Khách hàng mới</span>
+                            </div>
+                        </div>
+                        <div class="rating">
+                            <span class="star">★</span>
+                            <span class="star">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                            <span class="star empty">★</span>
+                        </div>
+                    </div>
+                    <div class="review-content">
+                        Chất lượng giảm sút so với trước. Hủ tiếu nam vang nước dùng nhạt, tôm không tươi. Giá tăng nhưng chất lượng không theo kịp. Bàn ghế cũ kỹ, cần tu sửa lại. Thất vọng!
+                    </div>
+                    <div class="review-meta">
+                        <span>3 tuần trước</span>
+                        <button class="helpful-btn">👍 Hữu ích (14)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function filterReviews(category) {
+            const reviews = document.querySelectorAll('.review-card');
+            const tabs = document.querySelectorAll('.filter-tab');
+            
+            // Update active tab
+            tabs.forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter reviews
+            reviews.forEach(review => {
+                if (category === 'all' || review.dataset.category === category) {
+                    review.style.display = 'block';
+                    review.style.animation = 'fadeIn 0.3s ease';
+                } else {
+                    review.style.display = 'none';
+                }
+            });
+        }
+
+        // Add animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeIn {
+                from { opacity: 0; transform: translateY(20px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Add click effects to helpful buttons
+        document.querySelectorAll('.helpful-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.background = '#27ae60';
+                this.innerHTML = '✓ Đã đánh giá hữu ích';
+                setTimeout(() => {
+                    this.style.background = '#3498db';
+                    this.innerHTML = this.innerHTML.replace('✓ Đã đánh giá hữu ích', '👍 Hữu ích');
+                }, 2000);
+            });
+        });
+    </script>
+</body>
+</html>
